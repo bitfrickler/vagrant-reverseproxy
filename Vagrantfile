@@ -33,7 +33,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   #config.vm.synced_folder ".", "/vagrant", type: "sshfs", ssh_opts_append: "-o User=vagrant"
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"#, owner: "vagrant", group: "vagrant"
+  #config.vm.synced_folder "./src/nginx", "/etc/nginx", type: "virtualbox"
   #config.vm.synced_folder "./src/nginx", "/etc/nginx", type: "sshfs"
   #config.vm.synced_folder "./src/haproxy", "/etc/haproxy", type: "sshfs"
 
@@ -46,8 +47,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :path => "shell-provisioner/install.sh"
-  config.vm.provision :shell, :path => "shell-provisioner/prepare_nginx.sh"
-  config.vm.provision :shell, :path => "shell-provisioner/prepare_haproxy.sh"
+  #config.vm.provision :shell, :path => "shell-provisioner/prepare_nginx.sh"
+  #config.vm.provision :shell, :path => "shell-provisioner/prepare_haproxy.sh"
   #config.vm.provision :shell, :path => "shell-provisioner/install_go.sh", privileged: false
 
   config.vm.provision :reload
