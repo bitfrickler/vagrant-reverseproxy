@@ -32,11 +32,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  #config.vm.synced_folder ".", "/vagrant", type: "sshfs", ssh_opts_append: "-o User=vagrant"
-  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"#, owner: "vagrant", group: "vagrant"
-  #config.vm.synced_folder "./src/nginx", "/etc/nginx", type: "virtualbox"
-  #config.vm.synced_folder "./src/nginx", "/etc/nginx", type: "sshfs"
-  #config.vm.synced_folder "./src/haproxy", "/etc/haproxy", type: "sshfs"
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox"
+  config.vm.synced_folder "./src/nginx", "/etc/nginx", type: "rsync"
+  config.vm.synced_folder "./src/haproxy", "/etc/haproxy", type: "rsync"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -47,9 +45,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :path => "shell-provisioner/install.sh"
-  #config.vm.provision :shell, :path => "shell-provisioner/prepare_nginx.sh"
-  #config.vm.provision :shell, :path => "shell-provisioner/prepare_haproxy.sh"
   #config.vm.provision :shell, :path => "shell-provisioner/install_go.sh", privileged: false
 
   config.vm.provision :reload
+
+  config.trigger.after :up do
+    `(vagrant rsync-auto &>/dev/null) &`
+  end
+
+  config.trigger.after :halt do
+     `lsof -p $(ps ax | grep rsync-auto | grep -v grep | awk '{ print $1 }' | xargs echo | sed -e 's/ /,/g') | grep cwd | awk '$9=="ENVIRON["PWD"]" { print "Killing rsync-related PID: " $2 }; { system("kill " $2)}'`
+  end
+
 end
