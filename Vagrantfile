@@ -45,7 +45,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provision :shell, :path => "shell-provisioner/install.sh"
-  #config.vm.provision :shell, :path => "shell-provisioner/install_go.sh", privileged: false
 
   config.vm.provision :reload
 
