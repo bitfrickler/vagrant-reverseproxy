@@ -1,0 +1,3 @@
+/etc/nginx/default.d IN_MODIFY /reload_nginx.sh
+/etc/nginx/conf.d IN_MODIFY /reload_nginx.sh
+/etc/nginx IN_MODIFY /reload_nginx.sh
